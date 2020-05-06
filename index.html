@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>note</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font: 16px/1.2em sans-serif;
+      }
+      div#container {
+        width: 50vw;
+        margin: 2em auto;
+      }
+      [contenteditable]:focus {
+        outline: 0px solid transparent;
+      }
+      li {
+        color: #333;
+        padding-left: calc(2px + 0.5em);
+        margin-bottom: 0.8em;
+      }
+      li[contenteditable] {
+        color: #113;
+        background-color: #eee;
+        border-left: 2px solid #116;
+        padding-left: 0.5em;
+      }
+      h1 {
+        font-size: 1.6em;
+        line-height: 2em;
+      }
+      kbd {
+        background-color: #eee;
+        border-radius: 3px;
+        border: 1px solid #b4b4b4;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .2), 0 2px 0 0 rgba(255, 255, 255, .7) inset;
+        font-size: .85em;
+        font-weight: 700;
+        padding: 2px 4px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="container">
+      <h1 class="editable" id="title">Title</h1>
+      <ul id="root">
+        <li class="editable">
+          Sample note item.<br />
+          <br />
+          Press <kbd>Tab</kbd> or <kbd>Ctrl</kbd>+click on Title or any item to start editing.<br />
+          <br />
+          When editing Title or note item, press <kbd>Ctrl</kbd>+<kbd>Up</kbd>/<kbd>Down</kbd> or <kbd>Tab</kbd>/<kbd>Shift</kbd>+<kbd>Tab</kbd> to move around between title and note items.<br />
+          <br />
+          When editing note item, pressing <kbd>Ctrl</kbd>+<kbd>Enter</kbd> will add new note item, while <kbd>Ctrl</kbd>+<kbd>Backspace</kbd> on an empty note item will delete it.<br />
+          <br />
+          Press <kbd>Esc</kbd> to unfocus/stop editing.<br />
+          <br />
+          Save as HTML page to store it permanently.
+        </li>
+      </ul>
+    </div>
+
+    <script>
+      function main() {
+        const firstItem = document.querySelector("ul#root > li");
+        setupEditableList(firstItem);
+
+        const date = new Date().toLocaleDateString("id-id"); // dd/mm/YYYY
+        const initialTitle = `Note ${date}`;
+        const title = document.getElementById("title");
+
+        document.title = initialTitle;
+        setupTitleElement(title, initialTitle);
+
+        document.body.addEventListener("keydown", (e) => {
+          if (e.key == "Escape") {
+            inactivateCurrentActiveEditable();
+          }
+
+          if (e.key == "Tab" && !activeEditable()) {
+            switchEditable(allEditable()[0]);
+          }
+        });
+      }
+
+      function setupTitleElement(element, titleText) {
+        element.innerText = titleText;
+        element.addEventListener("click", onListKlik);
+        element.addEventListener("input", () => {
+          document.title = element.innerText;
+        });
+        element.addEventListener("keydown", handleMovementKeys);
+      }
+
+      function setupEditableList(element) {
+        element.addEventListener("click", onListKlik);
+        element.addEventListener("keydown", handleItemActionKeys);
+        element.addEventListener("keydown", handleMovementKeys);
+      }
+
+      function activeEditable() {
+        return document.querySelector('[data-active="true"]');
+      }
+
+      function onListKlik(event) {
+        const clickable = event.currentTarget;
+
+        if (!event.ctrlKey || clickable.dataset.active == "true") return;
+
+        switchEditable(clickable);
+      }
+
+      function inactivateCurrentActiveEditable() {
+        const active = activeEditable();
+
+        if (active) {
+          active.blur();
+          active.removeAttribute("data-active");
+          active.removeAttribute("contenteditable");
+        }
+      }
+
+      function switchEditable(element) {
+        inactivateCurrentActiveEditable();
+        element.setAttribute("contenteditable", "");
+        element.setAttribute("data-active", true);
+        setTimeout(() => {
+          element.focus();
+        }, 100);
+      }
+
+      function handleItemActionKeys(event) {
+        const pressable = event.currentTarget;
+
+        if (event.key == "Enter" && event.ctrlKey) {
+          insertNewItemAfter(pressable);
+        }
+
+        if (event.key == "Backspace" && event.ctrlKey) {
+          removeElementIfEmptyAndNotAlone(pressable);
+        }
+      }
+
+      function handleMovementKeys(event) {
+        const pressable = event.currentTarget;
+
+        if (event.key == "ArrowDown" && event.ctrlKey) {
+          const nextActive = nextSibling(pressable);
+          if (nextActive) switchEditable(nextActive);
+        }
+
+        if (event.key == "ArrowUp" && event.ctrlKey) {
+          const nextActive = previousSibling(pressable);
+          if (nextActive) switchEditable(nextActive);
+        }
+
+        if (event.key == "Tab" && !event.shiftKey) {
+          const nextActive = nextSibling(pressable);
+          if (nextActive) switchEditable(nextActive);
+        }
+
+        if (event.key == "Tab" && event.shiftKey) {
+          const nextActive = previousSibling(pressable);
+          if (nextActive) switchEditable(nextActive);
+        }
+      }
+
+      function insertNewItemAfter(element) {
+        const elementParent = element.parentNode;
+        const li = document.createElement("li");
+        li.classList.add("editable");
+        elementParent.insertBefore(li, element.nextSibling);
+
+        setupEditableList(li);
+        switchEditable(li);
+      }
+
+      function removeElementIfEmptyAndNotAlone(element) {
+        const notAlone = element.parentNode.children.length > 1;
+
+        if (element.textContent.length == 0 && notAlone) {
+          const nextActive = previousSibling(element) || nextSibling(element);
+
+          element.remove();
+
+          if (nextActive) switchEditable(nextActive);
+        }
+      }
+
+      function allEditable() {
+        return document.getElementsByClassName("editable");
+      }
+
+      function previousSibling(element) {
+        const list = [...allEditable()];
+        const selfIndex = list.indexOf(element);
+
+        return list[selfIndex - 1];
+      }
+
+      function nextSibling(element) {
+        const list = [...allEditable()];
+        const selfIndex = list.indexOf(element);
+
+        return list[selfIndex + 1];
+      }
+
+      main();
+    </script>
+  </body>
+</html>
