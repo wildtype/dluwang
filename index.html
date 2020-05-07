@@ -52,7 +52,7 @@
         <li class="editable">
           Sample note item.<br />
           <br />
-          Press <kbd>Tab</kbd> or <kbd>Ctrl</kbd>+click on Title or any item to start editing.<br />
+          Press <kbd>Tab</kbd>, double-click, or <kbd>Ctrl</kbd>+Click on Title or any item to start editing.<br />
           <br />
           When editing Title or note item, press <kbd>Ctrl</kbd>+<kbd>Up</kbd>/<kbd>Down</kbd> or <kbd>Tab</kbd>/<kbd>Shift</kbd>+<kbd>Tab</kbd> to move around between title and note items.<br />
           <br />
@@ -90,7 +90,7 @@
 
       function setupTitleElement(element, titleText) {
         element.innerText = titleText;
-        element.addEventListener("click", onListKlik);
+        element.addEventListener("click", onEditableClick);
         element.addEventListener("input", () => {
           document.title = element.innerText;
         });
@@ -98,7 +98,7 @@
       }
 
       function setupEditableList(element) {
-        element.addEventListener("click", onListKlik);
+        element.addEventListener("click", onEditableClick);
         element.addEventListener("keydown", handleItemActionKeys);
         element.addEventListener("keydown", handleMovementKeys);
       }
@@ -107,12 +107,13 @@
         return document.querySelector('[data-active="true"]');
       }
 
-      function onListKlik(event) {
+      function onEditableClick(event) {
         const clickable = event.currentTarget;
-
-        if (!event.ctrlKey || clickable.dataset.active == "true") return;
-
-        switchEditable(clickable);
+        if (clickable.dataset.active == "true") return;
+        if (event.ctrlKey || event.detail == 2) {
+          switchEditable(clickable);
+          window.getSelection().removeAllRanges()
+        }
       }
 
       function inactivateCurrentActiveEditable() {
