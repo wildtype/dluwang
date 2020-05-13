@@ -1,0 +1,20 @@
+{
+  "name": "dluwang",
+  "version": "1.0.0",
+  "main": "index.html",
+  "repository": "git@github.com:wildtype/dluwang.git",
+  "author": "Mufti <iwak.sotong@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "parcel-plugin-inliner": "^1.0.14",
+    "posthtml": "^0.13.0",
+    "posthtml-inline-assets": "^3.1.0"
+  },
+  "dependencies": {
+    "npm-creole": "^0.3.6"
+  },
+  "scripts": {
+    "build": "env INLINE_ASSETS=true NODE_ENV=production parcel build index.html"
+  }
+}
