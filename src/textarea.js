@@ -31,10 +31,14 @@ export default class Textarea {
   }
 
   autoGrow() {
+    const initialDocumentPosition = document.documentElement.scrollTop;
+
     this.element.style.height = 'auto';
 
     const height = `${this.element.scrollHeight - 28}px`;
     this.element.style.height = height;
+
+    document.documentElement.scrollTop = initialDocumentPosition;
   }
 
   bindKeys() {
@@ -55,6 +59,8 @@ export default class Textarea {
 
     setTimeout(() => {
       this.autoGrow();
+      this.element.selectionStart = 0;
+      this.element.selectionEnd = 0;
       this.element.focus();
     }, 50);
   }

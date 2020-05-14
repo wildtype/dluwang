@@ -12,6 +12,7 @@
     "posthtml-inline-assets": "^3.1.0"
   },
   "dependencies": {
+    "normalize.css": "^8.0.1",
     "npm-creole": "^0.3.6"
   },
   "scripts": {
