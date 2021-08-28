@@ -4,8 +4,13 @@ body {
   font: 16px/1.6 Arial, sans-serif;
 }
 
-section#main {
-  max-width: 50vw;
+article#main {
+  max-width: 960px;
+  margin: 160px auto;
+}
+
+div#editor {
+  max-width: 960px;
   margin: 160px auto;
 }
 
@@ -18,7 +23,7 @@ textarea {
   width: 100%;
 }
 
-a[href*="#/?page=tag:"] {
+a[href*="#/page/tag:"] {
   color: #b59575;
   text-decoration: none;
 }
@@ -34,4 +39,8 @@ ul, ol {
 
 li {
   margin-left: 1.6em;
+}
+
+.hide {
+  display: none !important;
 }
