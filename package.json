@@ -6,7 +6,7 @@
   "author": "Mufti <iwak.sotong@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "parcel-bundler": "^1.12.4",
+    "parcel-bundler": "^1.12.5",
     "parcel-plugin-inliner": "^1.0.14",
     "posthtml": "^0.13.0",
     "posthtml-inline-assets": "^3.1.0"
