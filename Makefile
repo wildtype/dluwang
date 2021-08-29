@@ -1,2 +1,4 @@
 all:
-	npm run build
+	yarn build
+ts:
+	yarn tsc --noEmit src/*.ts

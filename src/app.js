@@ -1,5 +1,6 @@
 import Textarea from './textarea';
 import Router from './router.ts';
+import Parser from './parser.ts';
 
 window.addEventListener("beforeunload", (event) => {
   const confirmationMessage = "Dont go";
@@ -14,11 +15,18 @@ Element.prototype.addEventListenerToChild = function(evName, chSelector, callbac
   });
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+function main() {
   const main = document.getElementById('main');
   const editor = document.getElementById('editor');
+  const parser = new Parser({
+    interwiki: {
+      wp: 'https://en.wikipedia.org/wiki/',
+      c2: 'https://wiki.c2.com/?'
+    },
+    linkFormat: '#/page/'
+  });
 
-  const textarea = new Textarea({ container: editor });
+  const textarea = new Textarea({ container: editor, parser: parser });
   const router = new Router();
 
   document.addEventListener('keydown', (e) => {
@@ -31,4 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Mengunjungi halaman', event.target.textContent);
     router.route(event.target.href);
   });
-});
+}
+
+document.addEventListener('DOMContentLoaded', main);

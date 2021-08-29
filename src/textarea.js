@@ -1,9 +1,8 @@
-import creole from 'npm-creole';
-
 export default class Textarea {
   constructor(options) {
     this.active = false;
     this.container = options.container;
+    this.parser = options.parser;
 
     this.parentElement = undefined;
 
@@ -12,14 +11,6 @@ export default class Textarea {
 
     this.bindAutoGrow();
     this.bindKeys();
-
-    this.creoleParser = new creole({
-      interwiki: {
-        wp: 'https://en.wikipedia.org/wiki/',
-        c2: 'https://wiki.c2.com/?'
-      },
-      linkFormat: '#/page/'
-    });
   }
 
   buildElement() {
@@ -75,7 +66,7 @@ export default class Textarea {
     this.parentElement.innerHTML = '';
     this.container.classList.add('hide');
 
-    this.creoleParser.parse(this.parentElement, value);
+    this.parser.parse(this.parentElement, value);
     this.parentElement.classList.remove('hide')
     this.element.value = '';
     this.active = false;
