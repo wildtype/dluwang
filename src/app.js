@@ -7,14 +7,6 @@ window.addEventListener("beforeunload", (event) => {
   event.returnValue = confirmationMessage;
 });
 
-Element.prototype.addEventListenerToChild = function(evName, chSelector, callback) {
-  this.addEventListener(evName, (event) => {
-    if (event.target.matches(chSelector)) {
-      callback(event);
-    }
-  });
-};
-
 function main() {
   const main = document.getElementById('main');
   const editor = document.getElementById('editor');
@@ -35,10 +27,7 @@ function main() {
     }
   });
 
-  main.addEventListenerToChild('click', 'a[href^="#/page/"]', (event) => {
-    console.log('Mengunjungi halaman', event.target.textContent);
-    router.route(event.target.href);
-  });
+  window.addEventListener('popstate', router.routeTo);
 }
 
 document.addEventListener('DOMContentLoaded', main);

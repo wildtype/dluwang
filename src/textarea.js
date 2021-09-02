@@ -6,17 +6,10 @@ export default class Textarea {
 
     this.parentElement = undefined;
 
-    this.element = this.buildElement();
-    this.container.appendChild(this.element);
+    this.element = this.container.querySelector('textarea#editor__textarea');
 
     this.bindAutoGrow();
     this.bindKeys();
-  }
-
-  buildElement() {
-    const textarea = document.createElement('textarea');
-    textarea.rows = 1;
-    return textarea;
   }
 
   bindAutoGrow() {
