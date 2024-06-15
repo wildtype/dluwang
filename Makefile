@@ -1,4 +1,4 @@
 all:
-	yarn build
+	npx yarn build
 ts:
-	yarn tsc --noEmit src/*.ts
+	npx yarn tsc --noEmit src/*.ts
