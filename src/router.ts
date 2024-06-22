@@ -1,18 +1,28 @@
 export default class Router {
+  routes: {};
+
   constructor(name: string) {
+    this.routes = {};
   }
 
   routeTo(event: PopStateEvent) {
-    console.log(event);
     const addr = window.location;
-    console.log(addr);
+    const pagePart: string = addr.hash;
+    const matching: string[] | null = pagePart.match(/^#\/(.*?)\//);
+
+    console.log('routing:', addr, 'part:', pagePart, 'matching', matching);
+    console.log('routes', this.routes);
+    if (matching) {
+      const action = matching[1];
+
+      if (this.routes[action]) {
+        this.routes[action]();
+      }
+    }
   }
 
-  route(linkAddress: string) {
-    const url: URL = new URL(linkAddress);
-    const pagePart: string = url.hash;
-    const destinationTitle: string = pagePart.replace(/^#\/page\//, '');
-
-    console.log(`"${destinationTitle}"`);
+  route(prefix: string, callback: () => void) {
+    console.log('addingRoute', prefix);
+    this.routes[prefix] = callback;
   }
 }

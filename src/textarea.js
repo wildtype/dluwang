@@ -5,6 +5,7 @@ export default class Textarea {
     this.parser = options.parser;
 
     this.parentElement = undefined;
+    this.editableSlug = undefined;
 
     this.element = this.container.querySelector('textarea#editor__textarea');
 
@@ -40,6 +41,7 @@ export default class Textarea {
   activate(parentElement) {
     this.active = true;
     this.parentElement = parentElement;
+    this.editableSlug = this.parentElement.dataset.title;
 
     parentElement.classList.add('hide');
     this.element.value = parentElement.dataset.source || '';
@@ -60,8 +62,8 @@ export default class Textarea {
     this.container.classList.add('hide');
 
     this.parser.parse(this.parentElement, value);
-    this.parentElement.classList.remove('hide')
     this.element.value = '';
     this.active = false;
+    window.location = `#/page/${this.editableSlug}`;
   }
 }

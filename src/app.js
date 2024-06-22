@@ -8,7 +8,7 @@ window.addEventListener("beforeunload", (event) => {
 });
 
 function main() {
-  const main = document.getElementById('main');
+  const mainArticle = document.getElementById('main');
   const editor = document.getElementById('editor');
   const parser = new Parser({
     interwiki: {
@@ -23,11 +23,29 @@ function main() {
 
   document.addEventListener('keydown', (e) => {
     if (e.key === "i" && !textarea.active) {
-      textarea.activate(main);
+      window.location = '#/edit/';
     }
   });
 
-  window.addEventListener('popstate', router.routeTo);
+  router.route('edit', () => {
+    textarea.activate(mainArticle)
+  });
+  
+  router.route('page', () => {
+    const addr = window.location;
+    const pagePart = addr.hash;
+    const matching = pagePart.match(/^#\/.*?\/(.*)/);
+    const pageTitle = matching[1];
+    
+    console.log('Routeing to page page', matching[1])
+    
+    if (pageTitle) {
+      const page = document.querySelector(`[data-title="${matching[1]}"]`);
+      if (page) page.classList.remove('hide');
+    }
+  });
+
+  window.addEventListener('popstate', router.routeTo.bind(router));
 }
 
 document.addEventListener('DOMContentLoaded', main);
